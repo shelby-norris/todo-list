@@ -77,7 +77,7 @@ style={{ marginRight: 8 }}
 className='variant-outlined bg-gray-600 rounded-lg  text-white'
 />
  
-<button onClick={createTodo} className='text-gray-800 font-semibold p-1 rounded-xl bg-amber-300 hover:bg-amber-200 hover:cursor-pointer' >Send Data</button>
+<button onClick={createTodo} className='text-gray-800 font-semibold p-1 rounded-xl bg-amber-300 hover:bg-amber-200 hover:cursor-pointer' >Add Task</button>
 
 <ul className="text-white" style={{ marginTop: 16 }}>
 {todos.map(t => (
