@@ -69,7 +69,7 @@ setText(data)
 return (
 <>
 <div style={{ padding: 20 }}>
-<h1 className='text-3xl font-bold text-white'>Todo App</h1>
+<h1 className='text-3xl font-bold text-white mb-10'>Todo App</h1>
 <input
 value={text}
 onChange={changeHandlerText }
@@ -77,7 +77,7 @@ style={{ marginRight: 8 }}
 className='variant-outlined bg-gray-600 rounded-lg  text-white'
 />
  
-<button onClick={createTodo} className='text-white' >Send Data</button>
+<button onClick={createTodo} className='text-gray-800 font-semibold p-1 rounded-xl bg-amber-300 hover:bg-amber-200 hover:cursor-pointer' >Send Data</button>
 
 <ul className="text-white" style={{ marginTop: 16 }}>
 {todos.map(t => (
