@@ -74,7 +74,8 @@ return (
 value={text}
 onChange={changeHandlerText }
 style={{ marginRight: 8 }}
-className='bg-gray-900 rounded-lg outline-none p-2 text-white'
+placeholder='Enter task here'
+className='bg-gray-900 rounded-lg outline-none p-2 text-white placeholder:italic'
 />
  
 <button onClick={createTodo} className='text-gray-800 font-semibold p-1 rounded-xl bg-amber-300 hover:bg-amber-200 hover:cursor-pointer' >Add Task</button>
