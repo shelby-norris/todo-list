@@ -22,6 +22,9 @@ function App() {
   const [todos, setTodos] = useState([]); // the array where scanCommand will save the information
   const [text, setText] = useState(""); // string that is representing the text that you want to save in the table
 
+  // Part of the icon functions
+  // const [todoToEdit, setTodoToEdit] = useState("");
+
   const scanTodos = async () => {
     try {
       const command = new ScanCommand({ TableName: TABLE_NAME });
@@ -58,6 +61,21 @@ function App() {
     setText(data);
   };
 
+  // The following give functionality to edit and delete icons:
+
+  // const deleteTodo = (id) => {
+  //   const filteredTodos = todos.filter((todo) => {
+  //     return todo.id != id;
+  //   });
+  //     setTodos(filteredTodos)
+
+  // };
+
+  // const updateTodo = (todoObject) => {
+  //   setTodoToEdit(todoObject.id);
+
+  // }
+
   return (
     <>
       <div style={{ padding: 20 }}>
@@ -78,8 +96,8 @@ function App() {
         </button>
 
         <ul className="text-white" style={{ marginTop: 16 }}>
-          {todos.map((t) => (
-            <li key={t.id}>{t.Text}</li>
+          {todos.map((todoElement) => (
+            <li key={todoElement.id}>{todoElement.Text}</li>
           ))}
         </ul>
       </div>
