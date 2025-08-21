@@ -1,59 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {
-  DynamoDBDocumentClient,
-  ScanCommand,
-  PutCommand,
-} from "@aws-sdk/lib-dynamodb";
-
-const client = new DynamoDBClient({
-  region: import.meta.env.VITE_AWS_REGION,
-  credentials: {
-    accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-    secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
-  },
-});
-
-const docClient = DynamoDBDocumentClient.from(client);
-
-const TABLE_NAME = "Todo";
+import { useState, useEffect } from "react";
+import { scanTodos, createTodo } from "./utils/dynamo";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { PiPencil } from "react-icons/pi";
 
 function App() {
   const [todos, setTodos] = useState([]); // the array where scanCommand will save the information
   const [text, setText] = useState(""); // string that is representing the text that you want to save in the table
 
   // Part of the icon functions
-  // const [todoToEdit, setTodoToEdit] = useState("");
-
-  const scanTodos = async () => {
-    try {
-      const command = new ScanCommand({ TableName: TABLE_NAME });
-      const response = await docClient.send(command);
-      console.log(response);
-      setTodos(response.Items);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-
-  const createTodo = async () => {
-    const item = {
-      id: Date.now().toString(),
-      Text: text,
-      isComplete: false,
-    };
-
-    const command = new PutCommand({ TableName: "Todo", Item: item });
-    const response = await docClient.send(command);
-
-    setTodos([...todos, item]); // update state
-    console.log(response);
-  };
+  const [todoToEdit, setTodoToEdit] = useState({});
 
   // The useEffect hook is called every time the component is showed to the user
   // onload event on html
   useEffect(() => {
-    scanTodos();
+    async function getTodos() {
+      const scanned = await scanTodos();
+      setTodos(scanned);
+    }
+
+    getTodos();
   }, []);
 
   const changeHandlerText = (event) => {
@@ -61,20 +26,29 @@ function App() {
     setText(data);
   };
 
+  const handleCreateTodo = async () => {
+    const createdTodo = createTodo(text)
+
+    setTodos([...todos, createTodo]);
+    setText("");
+  };
+
   // The following give functionality to edit and delete icons:
+  const deleteTodo = (id) => {
+    const filteredTodos = todos.filter((todo) => {
+      return todo.id != id;
+    });
+    setTodos(filteredTodos);
+  };
 
-  // const deleteTodo = (id) => {
-  //   const filteredTodos = todos.filter((todo) => {
-  //     return todo.id != id;
-  //   });
-  //     setTodos(filteredTodos)
+  const updateTodo = () => {
+    const filteredTodos = todos.filter((todo) => {
+      return todoToEdit.id != todo.id;
+    });
 
-  // };
-
-  // const updateTodo = (todoObject) => {
-  //   setTodoToEdit(todoObject.id);
-
-  // }
+    setTodos([...filteredTodos, todoToEdit]);
+    setTodoToEdit({});
+  };
 
   return (
     <>
@@ -89,16 +63,54 @@ function App() {
         />
 
         <button
-          onClick={createTodo}
+          onClick={() => handleCreateTodo()}
           className="text-gray-800 font-semibold p-1 rounded-xl bg-amber-300 hover:bg-amber-200 hover:cursor-pointer"
         >
           Add Task
         </button>
 
-        <ul className="text-white" style={{ marginTop: 16 }}>
-          {todos.map((todoElement) => (
-            <li key={todoElement.id}>{todoElement.Text}</li>
-          ))}
+        <ul className="text-white pl-5 pt-3" style={{ marginTop: 16 }}>
+          {todos.map((todoElement) =>
+            todoToEdit?.id === todoElement.id ? (
+              <div>
+                <input
+                  value={todoToEdit.Text}
+                  className="bg-gray-900 rounded-lg p-1"
+                  onChange={(event) =>
+                    setTodoToEdit({
+                      id: todoToEdit.id,
+                      Text: event.target.value,
+                      isComplete: todoToEdit.isComplete,
+                    })
+                  }
+                  type="text"
+                  name="edit-task"
+                  id="edit-task"
+                />
+                <button
+                  onClick={() => updateTodo()}
+                  className="bg-amber-300 text-gray-800 font-semibold ml-2 p-1 rounded-xl hover:bg-amber-200"
+                  style={{ cursor: "pointer" }}
+                >
+                  Update
+                </button>
+              </div>
+            ) : (
+              <li className="ml-.5 flex items-center" key={todoElement.id}>
+                {todoElement.Text}{" "}
+                <div className="flex m-4">
+                  <PiPencil
+                    onClick={() => setTodoToEdit(todoElement)}
+                    style={{ cursor: "pointer", color: "orange" }}
+                  />
+                  <FaRegTrashCan
+                    onClick={(event) => deleteTodo(todoElement.id)}
+                    style={{ cursor: "pointer", marginLeft: 7 }}
+                  />
+                </div>
+              </li>
+            )
+          )}
         </ul>
       </div>
     </>
