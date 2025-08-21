@@ -20,4 +20,4 @@ Styling is provided by [Tailwind](https://tailwindcss.com/).
 
 Take a look at the table after adding more tasks with the app!
 
-![alt text](<Screenshot 2025-08-20 205803.png>)
+![To-do Table](<Screenshot 2025-08-20 205803.png>)
