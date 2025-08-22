@@ -27,9 +27,9 @@ function App() {
   };
 
   const handleCreateTodo = async () => {
-    const createdTodo = createTodo(text)
+    const createdTodo = await createTodo(text)
 
-    setTodos([...todos, createTodo]);
+    setTodos([...todos, createdTodo]);
     setText("");
   };
 
