@@ -3,6 +3,8 @@ import {
   DynamoDBDocumentClient,
   ScanCommand,
   PutCommand,
+  DeleteCommand,
+  UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({
@@ -41,4 +43,43 @@ export const createTodo = async (text) => {
 
   console.log(response);
   return item;
+};
+
+export const deleteTodoById = async (id) => {
+   const command = new DeleteCommand({
+    TableName: TABLE_NAME,
+    Key: {
+      id: id,
+    },
+  });
+
+  const response = await docClient.send(command);
+  console.log(response);
+  return response;
+};
+
+export const updateTodo = async (todo) => {
+    const command = new UpdateCommand({
+    TableName: TABLE_NAME,
+    Key: {
+      id: todo.id,
+    },
+    UpdateExpression: "SET #TodoText = :TodoText, #IsComplete = :IsComplete",
+    ExpressionAttributeNames: {
+      "#TodoText": "TodoText",
+      "#IsComplete": ":IsComplete",
+    },
+
+    ExpressionAttributeValues: {
+      ":TodoText": TodoText,
+      ":IsComplete": IsComplete,
+    },
+
+
+    // ReturnValues: "ALL_NEW",
+  });
+
+  const response = await docClient.send(command);
+  console.log(response);
+  return response;
 };

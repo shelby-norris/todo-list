@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { scanTodos, createTodo } from "./utils/dynamo";
+import {
+  scanTodos,
+  createTodo,
+  deleteTodoById,
+  updateTodo,
+} from "./utils/dynamo";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { PiPencil } from "react-icons/pi";
 
@@ -27,26 +32,35 @@ function App() {
   };
 
   const handleCreateTodo = async () => {
-    const createdTodo = await createTodo(text)
+    const createdTodo = await createTodo(text);
 
     setTodos([...todos, createdTodo]);
     setText("");
   };
 
   // The following give functionality to edit and delete icons:
-  const deleteTodo = (id) => {
+  const deleteTodo = async (id) => {
+    await deleteTodoById(id);
+
     const filteredTodos = todos.filter((todo) => {
       return todo.id != id;
     });
     setTodos(filteredTodos);
   };
 
-  const updateTodo = () => {
-    const filteredTodos = todos.filter((todo) => {
-      return todoToEdit.id != todo.id;
-    });
+  const handleUpdateTodo = async () => {
+    await updateTodo(todoToEdit);
+    // const filteredTodos = todos.filter((todo) => {
+    //   return todoToEdit.id != todo.id;
+    // });
 
-    setTodos([...filteredTodos, todoToEdit]);
+    // setTodos([...filteredTodos, todoToEdit]);
+
+    setTodos((previousTodos) => {
+      return previousTodos.map((todo) => {
+        return todo.id === todoToEdit.id ? todoToEdit : todo;
+      });
+    });
     setTodoToEdit({});
   };
 
@@ -72,15 +86,15 @@ function App() {
         <ul className="text-white pl-5 pt-3" style={{ marginTop: 16 }}>
           {todos.map((todoElement) =>
             todoToEdit?.id === todoElement.id ? (
-              <div>
+              <div key={todoElement.id}>
                 <input
-                  value={todoToEdit.Text}
+                  value={todoToEdit.TodoText}
                   className="bg-gray-900 rounded-lg p-1"
                   onChange={(event) =>
                     setTodoToEdit({
                       id: todoToEdit.id,
-                      Text: event.target.value,
-                      isComplete: todoToEdit.isComplete,
+                      TodoText: event.target.value,
+                      IsComplete: todoToEdit.IsComplete,
                     })
                   }
                   type="text"
@@ -88,8 +102,8 @@ function App() {
                   id="edit-task"
                 />
                 <button
-                  onClick={() => updateTodo()}
-                  className="bg-amber-300 text-gray-800 font-semibold ml-2 p-1 rounded-xl hover:bg-amber-200"
+                  onClick={() => handleUpdateTodo()}
+                  className="bg-amber-300 -gray-800 font-semibold ml-2 p-1 rounded-xl hover:bg-amber-200"
                   style={{ cursor: "pointer" }}
                 >
                   Update
@@ -97,14 +111,15 @@ function App() {
               </div>
             ) : (
               <li className="ml-.5 flex items-center" key={todoElement.id}>
-                {todoElement.Text}{" "}
+                {/* When I change the following from todoElement.Text to todoElement.TodoText it will not display the tasks in the UI VVV */}
+                {todoElement.Text}{" "} 
                 <div className="flex m-4">
                   <PiPencil
                     onClick={() => setTodoToEdit(todoElement)}
                     style={{ cursor: "pointer", color: "orange" }}
                   />
                   <FaRegTrashCan
-                    onClick={(event) => deleteTodo(todoElement.id)}
+                    onClick={() => deleteTodo(todoElement.id)}
                     style={{ cursor: "pointer", marginLeft: 7 }}
                   />
                 </div>
