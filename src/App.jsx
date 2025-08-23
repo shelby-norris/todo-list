@@ -50,11 +50,6 @@ function App() {
 
   const handleUpdateTodo = async () => {
     await updateTodo(todoToEdit);
-    // const filteredTodos = todos.filter((todo) => {
-    //   return todoToEdit.id != todo.id;
-    // });
-
-    // setTodos([...filteredTodos, todoToEdit]);
 
     setTodos((previousTodos) => {
       return previousTodos.map((todo) => {
@@ -88,12 +83,12 @@ function App() {
             todoToEdit?.id === todoElement.id ? (
               <div key={todoElement.id}>
                 <input
-                  value={todoToEdit.TodoText}
+                  value={todoToEdit.Text}
                   className="bg-gray-900 rounded-lg p-1"
                   onChange={(event) =>
                     setTodoToEdit({
                       id: todoToEdit.id,
-                      TodoText: event.target.value,
+                      Text: event.target.value,
                       IsComplete: todoToEdit.IsComplete,
                     })
                   }
@@ -103,7 +98,7 @@ function App() {
                 />
                 <button
                   onClick={() => handleUpdateTodo()}
-                  className="bg-amber-300 -gray-800 font-semibold ml-2 p-1 rounded-xl hover:bg-amber-200"
+                  className="bg-amber-300 text-gray-800 font-semibold ml-2 p-1 rounded-xl hover:bg-amber-200"
                   style={{ cursor: "pointer" }}
                 >
                   Update
@@ -111,7 +106,6 @@ function App() {
               </div>
             ) : (
               <li className="ml-.5 flex items-center" key={todoElement.id}>
-                {/* When I change the following from todoElement.Text to todoElement.TodoText it will not display the tasks in the UI VVV */}
                 {todoElement.Text}{" "} 
                 <div className="flex m-4">
                   <PiPencil

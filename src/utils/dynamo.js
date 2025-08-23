@@ -35,7 +35,7 @@ export const createTodo = async (text) => {
   const item = {
     id: Date.now().toString(),
     Text: text,
-    isComplete: false,
+    IsComplete: false,
   };
 
   const command = new PutCommand({ TableName: "Todo", Item: item });
@@ -59,27 +59,26 @@ export const deleteTodoById = async (id) => {
 };
 
 export const updateTodo = async (todo) => {
+    const { id, Text, IsComplete, } = todo;
+    console.log(todo)
     const command = new UpdateCommand({
     TableName: TABLE_NAME,
-    Key: {
-      id: todo.id,
-    },
-    UpdateExpression: "SET #TodoText = :TodoText, #IsComplete = :IsComplete",
+    Key: { id },
+    UpdateExpression: "SET #Text = :Text, #IsComplete = :IsComplete",
+
     ExpressionAttributeNames: {
-      "#TodoText": "TodoText",
-      "#IsComplete": ":IsComplete",
+      "#Text": "Text",
+      "#IsComplete": "IsComplete",
     },
 
     ExpressionAttributeValues: {
-      ":TodoText": TodoText,
+      ":Text": Text,
       ":IsComplete": IsComplete,
     },
 
-
-    // ReturnValues: "ALL_NEW",
   });
 
-  const response = await docClient.send(command);
-  console.log(response);
-  return response;
+  const { Attributes } = await docClient.send(command);
+  console.log(Attributes);
+  return Attributes;
 };
