@@ -21,3 +21,9 @@ Styling is provided by [Tailwind](https://tailwindcss.com/).
 Take a look at the table after adding more tasks with the app!
 
 ![To-do Table](<Screenshot 2025-08-20 205803.png>)
+
+## Day 4 Updates
+
+Two new operations have been added to this app. The pencil icon allowed us to edit the text field for the task in the todo list locally, but on page refresh the original text would reappear since the database itself was not being updated. The same instance occurred with the trash icon; list items would only be "deleted" temporarily rather than be removed from the database.
+
+By adding two async functions, one for each icon, as well as two SDK commands, `UpdateCommand` and `DeleteCommand`, these icons now edit and delete table items within the DynamoDB table itself, not jus the UI.
